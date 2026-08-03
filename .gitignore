@@ -1,0 +1,11 @@
+# Frontend
+my-form/node_modules
+my-form/dist
+my-form/.env
+
+# Backend
+my-form-backend/node_modules
+my-form-backend/.env
+
+# Logs
+*.log
