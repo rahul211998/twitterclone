@@ -30,7 +30,7 @@ const Following = () => {
     },[])
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white ml-64 w-[calc(100%-16rem)] min-w-0">
 
     {loading ? (
   <SkeletonTheme baseColor="#202020" highlightColor="#3a3a3a">

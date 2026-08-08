@@ -182,7 +182,8 @@ export const generateQrCode = async (req, res) => {
     res.json({
     message: "Scan this QR code in Google Authenticator",
     qrCode,               // base64 image → show in <img src={qrCode} />
-    secret: secret.base32 // backup: user can enter this manually
+    secret: secret.base32, // backup: user can enter this manually
+    userdata : user
   });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
@@ -221,7 +222,7 @@ export const verifyTokenFromQrCode = async (req, res) => {
       user.twoFactorEnabled = true;
       await user.save();
 
-      res.json({ message: "2FA enabled successfully ✅", success : true });
+      res.json({ message: "2FA enabled successfully ✅", success : true, userdata : user });
     // res.json({message : `token ${token} user ${user}`})
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });

@@ -41,7 +41,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4">
+    <div className="min-h-screen  flex items-center justify-center p-4 bg-gray-900">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
 
         {/* Header */}
@@ -126,7 +126,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 disabled:opacity-60 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 disabled:opacity-60 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150 cursor-pointer"
           >
             {loading ? "Login in..." : "Login In"}
           </button>
@@ -135,7 +135,7 @@ const Login = () => {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Don't have an account?{" "}
-          <a href="/signup" className="text-indigo-600 hover:underline font-medium">
+          <a href="/signup" className="text-indigo-600 hover:underline font-medium cursor-pointer">
             Sign up
           </a>
         </p>

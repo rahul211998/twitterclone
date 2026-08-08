@@ -113,6 +113,8 @@ export const updateUser = async (req, res) => {
         const {username, fullName , email , currentPassword , newPassword, bio, link, } = req.body;
         let {profileImg, coverImg} = req.body;
 
+        console.log("profileImg",profileImg)
+
         let user = await User.findById({_id : userId});
 
         if(!user){
@@ -149,18 +151,18 @@ export const updateUser = async (req, res) => {
 
         // profile image and cover image
 
-        // if(profileImg){
+        if(profileImg){
 
-        //     if(user.profileImg){
-        //         // inside the destroy function we have to send the image id
-        //         //ex : https://res.cloudinary.com/demo/image/upload/v1753891234/profile_abc123.jpg
-        //         // here we get this alone profile_abc123
-        //         await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
-        //     }
+            if(user.profileImg){
+                // inside the destroy function we have to send the image id
+                //ex : https://res.cloudinary.com/demo/image/upload/v1753891234/profile_abc123.jpg
+                // here we get this alone profile_abc123
+                await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
+            }
 
-        //     const uploadedResponse = await cloudinary.UploadStream.uploader.upload(profileImg)
-        //     profileImg = uploadedResponse.secure_url;
-        // }
+            const uploadedResponse = await cloudinary.uploader.upload(profileImg)
+            profileImg = uploadedResponse.secure_url;
+        }
 
         // if(coverImg){
 
@@ -176,7 +178,7 @@ export const updateUser = async (req, res) => {
         //     coverImg = uploadedResponse.secure_url;
         // }
 
-        user.fullName = fullName || user.fullNam;
+        user.fullName = fullName || user.fullName;
         user.email = email || user.email;
         user.username = username || user.username;
         user.bio = bio || user.bio;
@@ -187,6 +189,7 @@ export const updateUser = async (req, res) => {
         user = await user.save();
 
         user.password = null;
+        user.twoFactorSecret = null;
 
        return res.status(200).json(user)
 

@@ -11,7 +11,7 @@ const MainLayout = () => {
         <Outlet />
       </div>
 
-      <Rightpanel />
+      {/* <Rightpanel /> */}
     </div>
   );
 };

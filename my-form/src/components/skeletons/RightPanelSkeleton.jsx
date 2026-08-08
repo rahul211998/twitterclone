@@ -1,27 +1,55 @@
-// const RightPanelSkeleton = () => {
-// 	return (
-// 		<div className='flex flex-col gap-2 w-52 my-2'>
-// 			<div className='flex gap-2 items-center'>
-// 				<div className='skeleton w-8 h-8 rounded-full shrink-0'></div>
-// 				<div className='flex flex-1 justify-between'>
-// 					<div className='flex flex-col gap-1'>
-// 						<div className='skeleton h-2 w-12 rounded-full'></div>
-// 						<div className='skeleton h-2 w-16 rounded-full'></div>
-// 					</div>
-// 					<div className='skeleton h-6 w-14 rounded-full'></div>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	);
-// };
-// export default RightPanelSkeleton;
+import React from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-import React from 'react'
-
-const RightPanelSkeleton = () => {
+export const RightPanelSkeleton = () => {
   return (
-    <div>RightPanelSkeleton</div>
-  )
-}
+    <div className="space-y-4 p-4">
+      {/* Profile */}
+      <div className="flex items-center gap-3">
+        <Skeleton
+          circle
+          width={48}
+          height={48}
+          className="animate-pulse"
+        />
 
-export default RightPanelSkeleton
+        <div>
+          <Skeleton
+            width={120}
+            height={15}
+            className="animate-pulse"
+          />
+
+          <Skeleton
+            width={80}
+            height={12}
+            className="animate-pulse"
+          />
+        </div>
+      </div>
+
+      {/* Suggested users */}
+      <Skeleton
+        width="100%"
+        height={80}
+        borderRadius={12}
+        className="animate-pulse"
+      />
+
+      <Skeleton
+        width="100%"
+        height={80}
+        borderRadius={12}
+        className="animate-pulse"
+      />
+
+      <Skeleton
+        width="100%"
+        height={80}
+        borderRadius={12}
+        className="animate-pulse"
+      />
+    </div>
+  );
+};

@@ -11,12 +11,27 @@ const API = axios.create({
 });
 
 // ─── Response Interceptor ─────────────────────────────────────
+// API.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       console.log("inter runs")
+//       window.location.href = "/login"; // redirect on unauthorized
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      window.location.href = "/login"; // redirect on unauthorized
+    if (
+      error.response?.status === 401 &&
+      window.location.pathname !== "/login"
+    ) {
+      window.location.href = "/login";
     }
+
     return Promise.reject(error);
   }
 );

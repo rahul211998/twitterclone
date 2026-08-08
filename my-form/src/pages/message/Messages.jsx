@@ -1,118 +1,8 @@
-// import React from "react";
-// import { useEffect } from "react";
-// import { useState } from "react";
-// import { useLocation } from "react-router-dom";
-// import {io} from "socket.io-client"
-
-// const Messages = () => {
-//   const [liveMessage, setLiveMessage] = useState("");
-//   const [inputLiveMessage, setInputLiveMessage ] = useState("")
-//   const location = useLocation()
-//   const socket = io("http://localhost:5000/chat");
-//   const storedUser = JSON.parse(localStorage.getItem("user"));
-
-//   useEffect(() => {
-//       socket.on("connectionMessage", (message) => {
-//     console.log("message is",message);
-
-//     socket.emit("join",location.state._id)
-//   });
-  
-
-//       return () => {
-//         socket.off("updateMessage");
-//     };
-//   },[])
-
-//   const sendMessagetoServer = () => {
-//     const messageData = {
-//       senderId : storedUser.userId,
-//       receiverId : location?.state?._id,
-//       text : inputLiveMessage,
-//     }
-
-//     console.log("messageData",messageData)
-//      socket.emit("messagesFromBrowser",messageData)
-//   }
-
-//   return (
-//     <div className="flex flex-col h-screen bg-black text-white">
-//       {/* Header */}
-//       <div className="h-16 border-b border-gray-800 flex items-center px-6">
-//         <img
-//           src="https://via.placeholder.com/40"
-//           alt="Profile"
-//           className="w-10 h-10 rounded-full object-cover"
-//         />
-
-//         <div className="ml-3">
-//           <h1 className="font-semibold text-lg">{location?.state?.username || "username"}</h1>
-//           <p className="text-xs text-gray-400">Active now</p>
-//         </div>
-//       </div>
-
-//       {/* Messages */}
-//       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
-//         {/* Received */}
-//         <div className="flex items-end gap-2">
-//           <img
-//             src="https://via.placeholder.com/32"
-//             alt=""
-//             className="w-8 h-8 rounded-full"
-//           />
-
-//           <div className="bg-gray-800 px-4 py-2 rounded-2xl max-w-sm">
-//             Hey! How are you? 
-//           </div>
-//         </div>
-
-//         {/* Sent */}
-//         <div className="flex justify-end">
-//           <div className="bg-blue-500 px-4 py-2 rounded-2xl max-w-sm">
-//             {"hello"}
-//           </div>
-//         </div>
-
-//         {/* Received */}
-//         <div className="flex items-end gap-2">
-//           <img
-//             src="https://via.placeholder.com/32"
-//             alt=""
-//             className="w-8 h-8 rounded-full"
-//           />
-
-//           <div className="bg-gray-800 px-4 py-2 rounded-2xl max-w-sm">
-//             {"chat1"}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Input */}
-//       <div className="border-t border-gray-800 p-4">
-//         <div className="flex items-center border border-gray-700 rounded-full px-4 py-2">
-//           <input
-//             type="text"
-//             value = {inputLiveMessage}
-//             placeholder="Message..."
-//             onChange={(e) => setInputLiveMessage(e.target.value)}
-//             className="flex-1 bg-transparent outline-none text-white placeholder-gray-500"
-//           />
-
-//           <button className="ml-3 text-blue-500 font-semibold hover:text-blue-400" onClick={sendMessagetoServer}>
-//             Send
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Messages;
-
 
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
+import { getRequest } from "../../services/Api";
 
 const Messages = () => {
   const location = useLocation();
@@ -146,6 +36,15 @@ const Messages = () => {
     };
   }, [socket, storedUser.userId]);
 
+  useEffect(() => {
+  const getOldMessages = async () => {
+    const response = await getRequest(`/messages/${location.state._id}`);
+    setMessages(response);
+  };
+
+  getOldMessages();
+}, [location.state._id]);
+
   const sendMessagetoServer = () => {
     if (!inputLiveMessage.trim()) return;
 
@@ -167,11 +66,11 @@ const Messages = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-black text-white">
+    <div className="flex flex-col h-screen bg-black text-white ml-64 w-[calc(100%-16rem)] min-w-0">
       {/* Header */}
       <div className="h-16 border-b border-gray-800 flex items-center px-6">
         <img
-          src="https://via.placeholder.com/40"
+          src= {location.state.profileImg ? location.state.profileImg : `https://via.placeholder.com/40` }
           alt="Profile"
           className="w-10 h-10 rounded-full object-cover"
         />
@@ -198,7 +97,7 @@ const Messages = () => {
             // Friend message
             <div key={index} className="flex items-end gap-2">
               <img
-                src="https://via.placeholder.com/32"
+                src= {location.state.profileImg ? location.state.profileImg : `https://via.placeholder.com/32`}
                 alt=""
                 className="w-8 h-8 rounded-full"
               />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { postRequest } from '../../services/Api';
 import { useNavigate } from 'react-router-dom';
+import OtpInput from "react-otp-input";
 
 const QrCodePage = () => {
 
@@ -36,9 +37,18 @@ const QrCodePage = () => {
   const qrCodeSendingFunction = async () => {
     const response = await postRequest("/auth/2fa/verify-setup",{token : qrcodeKey})
     if(response.success){
-      navigate("/dummypage");
+      localStorage.clear();
+
+        localStorage.setItem("user",JSON.stringify({
+        username : response.userdata.username,
+        fullName : response.userdata.fullName,
+        userId : response.userdata._id
+      }))
+
+      navigate("/homepage");
       return;
     }
+    
 
       console.log("check again");
       
@@ -79,9 +89,35 @@ const QrCodePage = () => {
 
         <p className="text-xs text-gray-400">{data.message}</p>
         
-        <div>
-          <input className='border-2 border-amber-700' type="number" value= {qrcodeKey} onChange={(e) => setQrcodeKey(e.target.value)}/>
-        <button onClick={qrCodeSendingFunction}>click</button>
+        <div className='mt-2'>
+          {/* <input className='border-2 border-amber-700' type="number" value= {qrcodeKey} onChange={(e) => setQrcodeKey(e.target.value)}/> */}
+                <OtpInput
+      inputStyle={ {
+  width: "56px",
+  height: "56px",
+  fontSize: "22px",
+  fontWeight: "600",
+  textAlign: "center",
+  border: "2px solid #D1D5DB",
+  borderRadius: "12px",
+  backgroundColor: "#FFFFFF",
+  color: "#111827",
+  outline: "none",
+  margin: "0 6px",
+      }
+      }
+        value={qrcodeKey}
+        onChange={(value) => setQrcodeKey(value)}
+        numInputs={6}
+        renderInput={(props) => (
+          <input
+          // type="tel"
+            {...props}
+            // className="p-5 h-12 mx-auto mt-50 text-center text-black text-xl border-2 rounded-md"
+          />
+        )}
+      />
+        <button className='bg-blue-600 px-3 py-2 rounded-2xl mt-2 cursor-pointer' onClick={qrCodeSendingFunction}>click</button>
         </div>
 
       </div>
@@ -97,14 +133,3 @@ export default QrCodePage;
 
 
 
-        {/* Secret Key */}
-        {/* {data.secret && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 mb-6">
-            <p className="text-xs text-gray-500 mb-1">
-              Can't scan? Enter this key manually:
-            </p>
-            <p className="text-sm font-mono font-semibold text-gray-800 tracking-widest break-all">
-              {data.secret}
-            </p>
-          </div>
-        )} */}

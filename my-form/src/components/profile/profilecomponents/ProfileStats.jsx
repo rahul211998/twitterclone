@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ProfileStats = ({authuser}) => {
+const ProfileStats = ({authuser, friendsListLength}) => {
 
     // const usernames = username
     const navigate = useNavigate();
@@ -20,16 +20,16 @@ const ProfileStats = ({authuser}) => {
 
       <div className="flex gap-50 mt-4">
         <div className="text-center">
-          <h2 className="font-bold text-2xl">{201}</h2>
+          <h2 className="font-bold text-2xl">{friendsListLength}</h2>
           <p className="text-2xl">Posts</p>
         </div>
 
-        <div className="text-center">
+        <div className="text-center cursor-pointer">
           <h2 className="font-bold text-2xl">{followers?.length ?? 10}</h2>
           <p className="text-2xl">Followers</p>
         </div>
 
-        <div className="text-center" onClick={() => {
+        <div className="text-center cursor-pointer" onClick={() => {
           navigate("/following")
         }}>
           <h2 className="font-bold text-2xl">{following?.length ?? 10}</h2>

@@ -66,8 +66,8 @@ const Optional2fa = () => {
   },[otp])
 
   return (
-    <div className="min-h-screen bg-gray-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-orange rounded-2xl shadow-md p-8 text-center">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-md p-8 text-center">
 
         {location.state.requires2FA ? 
         <div className="bg-blue-800 h-auto w-max p-5 rounded-2xl">
@@ -101,7 +101,7 @@ const Optional2fa = () => {
           />
         )}
       />
-          <button className="mt-5 bg-blue-500 text-white px-4 py-2 rounded" onClick={sendOtpToServer}>click</button>
+          <button className="mt-5 bg-blue-500 text-white px-4 py-2 rounded cursor-pointer" onClick={sendOtpToServer}>click</button>
         </div> : 
         
                 <div>
@@ -140,7 +140,7 @@ const Optional2fa = () => {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleEnable2FA}
-            className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150"
+            className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150 cursor-pointer"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -149,7 +149,7 @@ const Optional2fa = () => {
           </button>
           <button
             onClick={handleCancel}
-            className="flex-1 text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 active:scale-95 py-2.5 rounded-lg transition duration-150"
+            className="flex-1 text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 active:scale-95 py-2.5 rounded-lg transition duration-150 cursor-pointer"
           >
             Maybe later
           </button>
@@ -159,62 +159,6 @@ const Optional2fa = () => {
           You can always enable this later in your account settings.
         </p>
         </div>}
-
-        {/* <div>
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-        </div>
-
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Enable Two-Factor Authentication
-        </h2>
-        <p className="text-sm text-gray-500 mb-4">
-          Add an extra layer of security to your account.
-        </p>
-
-        
-        <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-4 py-3 mb-6 text-left">
-          <ul className="space-y-2 text-sm text-indigo-700">
-            {[
-              "Protects your account even if your password is stolen",
-              "Requires a code from your phone on every login",
-              "You can turn it off anytime from settings",
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={handleEnable2FA}
-            className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            Enable 2FA
-          </button>
-          <button
-            onClick={handleCancel}
-            className="flex-1 text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 active:scale-95 py-2.5 rounded-lg transition duration-150"
-          >
-            Maybe later
-          </button>
-        </div>
-
-        <p className="text-xs text-gray-400 mt-4">
-          You can always enable this later in your account settings.
-        </p>
-        </div> */}
 
       </div>
     </div>

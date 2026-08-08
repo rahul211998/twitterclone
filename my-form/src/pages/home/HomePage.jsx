@@ -8,65 +8,26 @@ import { AuthContext } from "../../context/AuthContext";
 import ShowImages from "./ShowImages";
 
 const HomePage = () => {
-	const [feedType, setFeedType] = useState("forYou");
-	const [imageFromServer, setImageFromServer] = useState("")
-	// const location = useLocation();
+	// const [feedType, setFeedType] = useState("forYou");
+	// const [imageFromServer, setImageFromServer] = useState("")
+	const [allPostsList, setAllPostsList] = useState([]);
 
-	// const { loginResponse } = location.state || {};
-
-	// const {setAuthUser } = useContext(AuthContext)
-
-
-	// useEffect(() => {
-	// 	console.log("home page first")
-	// 	console.log("loginResponse",loginResponse)
-
-	// 	setAuthUser(loginResponse.userdata)
-	// },[loginResponse, setAuthUser])
-
-		useEffect(() => {
-			
-	},[])
+	// const {authUser } = useContext(AuthContext)
 	
 
 	return (
 		<>
-			<div className='flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen'>
-
-				{/* <CreatePost/> */}
-				{/* Header */}
-				<div className='flex w-full border-b border-gray-700'>
-					<div
-						className={
-							"flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 cursor-pointer relative"
-						}
-						onClick={() => setFeedType("forYou")}
-					>
-						For you
-						{feedType === "forYou" && (
-							<div className='absolute bottom-0 w-10  h-1 rounded-full bg-primary'></div>
-						)}
-					</div>
-					<div
-						className='flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 cursor-pointer relative'
-						onClick={() => setFeedType("following")}
-					>
-						Following
-						{feedType === "following" && (
-							<div className='absolute bottom-0 w-10  h-1 rounded-full bg-primary'></div>
-						)}
-					</div>
-                    
-				</div>
-                
-
-				{/*  CREATE POST INPUT */}
+			{/* <div className='flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen'>
 				<CreatePost/>
-
-				{/* POSTS */}
-				{/* <Posts feedType={feedType} /> */}
 				<ShowImages/>
-			</div>
+			</div> */}
+			  <main className="ml-64 w-[calc(100%-16rem)] min-w-0 ">
+				<CreatePost setAllPostsList = {setAllPostsList}/>
+    <div className="mx-auto w-full max-w-2xl px-4">
+      {/* <CreatePost /> */}
+      <ShowImages allPostsList = {allPostsList} setAllPostsList = {setAllPostsList}/>
+    </div>
+  </main>
 		</>
 	);
 };

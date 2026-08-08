@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { postRequest } from "../../services/Api";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -10,6 +12,7 @@ export default function SignUp() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,6 +31,11 @@ export default function SignUp() {
       email: "",
       password: "",
         });
+
+      navigate("/login");
+
+      toast.success("account created successfully now login");
+
     } catch (error) {
         console.error("error", error.response?.data?.message || error.message);
     }
@@ -37,7 +45,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -123,7 +131,7 @@ export default function SignUp() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
               >
                 {showPassword ? (
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -143,7 +151,7 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 disabled:opacity-60 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 disabled:opacity-60 text-white text-sm font-medium py-2.5 rounded-lg transition duration-150 cursor-pointer"
           >
             {loading ? "Creating account..." : "Create Account"}
           </button>
@@ -152,7 +160,7 @@ export default function SignUp() {
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Already have an account?{" "}
-          <a href="/" className="text-indigo-600 hover:underline font-medium">
+          <a href="/login" className="text-indigo-600 hover:underline font-medium">
             log in
           </a>
         </p>
