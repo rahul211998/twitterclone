@@ -102,6 +102,17 @@ export const createComment = async (req, res) => {
         post.comments.push(comment);
         await post.save();
 
+        await post.populate([
+              {
+    path: "user",
+    select: "-password -email -followers -following -bio -link -twoFactorSecret -twoFactorEnabled"
+  },
+  {
+    path: "comments.user",
+    select: "-password -email -followers -following -bio -link -twoFactorSecret -twoFactorEnabled"
+  }
+        ])
+
         res.status(200).json({message : post})
         
     } catch (error) {

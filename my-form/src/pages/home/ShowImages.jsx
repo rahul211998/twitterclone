@@ -5,16 +5,17 @@ import PostsOptions from "./imageDotOptions/PostsOptions";
 import DeleteComments from "./imageDotOptions/DeleteComments";
 
 const ShowImages = ({allPostsList, setAllPostsList}) => {
+
+  console.log("rerender")
   // const [allPostsList, setAllPostsList] = useState([]);
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const [likedClicked,setLikeClicked] = useState()
-  const [colors, setColors] = useState("orange-100");
-  const [showComments, setShowComments] = useState(false);
   const [postId, setPostId] = useState("");
   const [commentValue, setCommentValue] = useState("");
   const [showCommentss, setShowCommentss] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [cmts, setCmts] = useState(false)
+  const [comments, setCommxents] = useState("");
+  const [commentProfile, setCommentProfile] = useState("https://i.pravatar.cc/40");
 
   const [openedPostId, setOpenedPostId] = useState(null);
 
@@ -44,44 +45,32 @@ const ShowImages = ({allPostsList, setAllPostsList}) => {
     
     try {
       const response = await postRequest(`/posts/comment/${postId}`,{text});
-      console.log("response sentComment",response);
+      // console.log("response sentComment",response);
       setCommentValue("");
-      setCmts(true)
+      // setCmts(true)
+      // setCommentProfile(comment?.user?.profileImg);
+
+       const updatedPost = response.message;
+       
+
+    setAllPostsList((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId ? {...post, comments: updatedPost.comments} : post
+      )
+    );
+    // comment?.user?.profileImg
+
+    console.log("updatedPost?.comments?.user?.profileImg",updatedPost?.comments[0].user.
+profileImg
+)
+
+    setCommentProfile(updatedPost?.comments[0].user?.profileImg || "https://i.pravatar.cc/40");
+
+    setCommentValue("");
     } catch (error) {
       console.log("error in sentComment",error)
     }
   }
-
-//   const sentComment = async (postId, text) => {
-//   if (!text.trim()) return;
-
-//   try {
-//     const response = await postRequest(
-//       `/posts/comment/${postId}`,
-//       { text }
-//     );
-
-//     console.log("response sentComment", response);
-
-//     const updatedPost = response.message;
-
-//     setAllPostsList((prevPosts) =>
-//       prevPosts.map((post) =>
-//         post._id === postId
-//           ? {
-//               ...post,
-//               comments: updatedPost.comments,
-//             }
-//           : post
-//       )
-//     );
-
-//     setCommentValue("");
-
-//   } catch (error) {
-//     console.log("error in sentComment", error);
-//   }
-// };
 
 
 
@@ -110,7 +99,7 @@ const ShowImages = ({allPostsList, setAllPostsList}) => {
 
         // console.log("getAllPostsResponse",getAllPostsResponse)
         setAllPostsList(getAllPostsResponse);
-        setCmts(false);
+        // setCmts(false);
 
         // console.log("allPostsList",allPostsList);
       } catch (error) {
@@ -120,10 +109,11 @@ const ShowImages = ({allPostsList, setAllPostsList}) => {
     
 
     getAllPosts();
-  }, [likedClicked, cmts]);
+  }, [likedClicked]);
 
-  console.log("allPostsList",allPostsList);
-
+  // console.log("allPostsList",allPostsList);
+  
+console.log("rerender ends")
   return (
     <div>
       <div className="md:max-w-3xl mx-auto p-5 bg-black border border-gray-800 rounded-lg overflow-hidden text-white">
@@ -234,8 +224,9 @@ const ShowImages = ({allPostsList, setAllPostsList}) => {
         >
           <img
             src={
+              // comment?.user?.profileImg
               comment?.user?.profileImg ||
-              "https://i.pravatar.cc/40"
+              commentProfile
             }
             className="w-10 h-10 rounded-full object-cover"
           />
@@ -264,6 +255,8 @@ const ShowImages = ({allPostsList, setAllPostsList}) => {
 
       
       <div className="border-t mt-1 border-gray-700"></div>
+
+      <button onClick={() => console.log("allPostsList",allPostsList)}>clicktocheck</button>
     </div>
   ))}
 
@@ -332,55 +325,3 @@ export default ShowImages;
 
 
 
-//           {showCommentss
-//     ?   <div className="px-4 space-y-3">
-//   {post.comments.map((comment) => (
-//     <div
-//       key={comment._id}
-//       className="flex justify-between items-start border-b border-gray-800 pb-3"
-//     >
-//       {/* Left Side */}
-//       <div className="flex gap-3 w-full">
-//         <img
-//           src={
-//             comment?.user?.profileImg ||
-//             "https://i.pravatar.cc/40"
-//           }
-//           alt="profile"
-//           className="w-10 h-10 rounded-full object-cover"
-//         />
-
-//         <div className="bg-gray-800 rounded-2xl px-4 py-3 w-full flex items-start justify-between">
-//   {/* Comment Content */}
-//   <div className="flex-1">
-//     <h3 className="font-semibold text-white text-sm">
-//       {comment?.user?.username || "Username"}
-//     </h3>
-
-//     <p className="text-gray-200 mt-1 break-words">
-//       {comment.text}
-//     </p>
-//   </div>
-
-//   {/* Actions */}
-//   <div className="flex items-center gap-4 ml-4">
-//     <button className="text-sm text-blue-400 hover:text-blue-300">
-//       Edit
-//     </button>
-
-//     <button
-//       onClick={() => deleteCommentFunction(post._id)}
-//       className="text-sm text-red-400 hover:text-red-300"
-//     >
-//       Delete
-//     </button>
-//   </div>
-// </div>
-
-//       </div>
-
-      
-//     </div>
-//   ))}
-// </div>
-//     : `View all ${post.comments.length} comments`}
