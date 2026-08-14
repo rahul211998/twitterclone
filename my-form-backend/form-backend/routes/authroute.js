@@ -1,5 +1,5 @@
 import express from "express";
-import {signup, login, logout, getMe, sendMail, testingFunction, generateQrCode, verifyTokenFromQrCode, lastTwoFaProcess,disAbleTwoFa} from "../controllers/authcontroller.js"
+import {signup, login, logout, getMe, sendMail, testingFunction, generateQrCode, verifyTokenFromQrCode, lastTwoFaProcess,disAbleTwoFa, refreshAccessToken} from "../controllers/authcontroller.js"
 import protectRoute from "../middleware/protectRoute.js";
 import upload from "../upload.js";
 import verifyToken from "../middleware/verifyToken.js"
@@ -18,6 +18,8 @@ router.post("/2fa/setup",verifyToken,generateQrCode)
 router.post("/2fa/verify-setup",verifyToken,verifyTokenFromQrCode)
 router.post("/2fa/challenge",lastTwoFaProcess)
 router.post("/2fa/disable", verifyToken, disAbleTwoFa)
+router.post("/refresh", refreshAccessToken);
+
 
 
 

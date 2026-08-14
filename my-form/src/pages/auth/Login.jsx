@@ -27,6 +27,7 @@ const Login = () => {
       const response = await postRequest("/auth/login", formData);
       // requires2FA
       console.log("response login", response.userdata);
+      console.log("window.location.pathname",window.location.pathname)
 
       setFormData({ username: "", password: "" });
       navigate("/oprional2fa", {state : {requires2FA: response.requires2FA,

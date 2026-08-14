@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import SignUp from './pages/auth/SignUp'
 import Login from './pages/auth/Login'
 import DummyPage from './pages/auth/DummyPage'
@@ -28,6 +28,8 @@ function App() {
       <ToastContainer />
 
       <Routes>
+
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* Without Sidebar */}
         {/* <Route path="/" element={<Login />} /> */}

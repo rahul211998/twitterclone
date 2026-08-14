@@ -41,6 +41,14 @@ suggestedUsers)
       }
     }
 
+    const [followedUser, setFollowedUser] = useState(null);
+
+const followUnFollowFunction = (id) => {
+  setFollowedUser((currentId) =>
+    currentId === id ? null : id
+  );
+};
+
 
 
         const getUserPosts = async () => {
@@ -205,10 +213,27 @@ setAuthUser(response);
               </p>
             </div>
           </div>
+          
 
-          <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-1.5 rounded-lg font-medium transition">
+          {/* <button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-1.5 rounded-lg font-medium transition">
             Follow
-          </button>
+          </button> */}
+
+          {followedUser === sf._id ? (
+  <button
+    className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-1.5 rounded-lg font-medium transition"
+    onClick={() => followUnFollowFunction(sf._id)}
+  >
+    UnFollow
+  </button>
+) : (
+  <button
+    className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-1.5 rounded-lg font-medium transition"
+    onClick={() => followUnFollowFunction(sf._id)}
+  >
+    Follow
+  </button>
+)}
         </div>
       </div>
     ))}

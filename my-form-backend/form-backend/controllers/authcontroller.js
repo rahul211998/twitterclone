@@ -105,6 +105,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         res.cookie("jwt", "" , {maxAge : 0});
+        res.cookie("refreshToken", "", {maxAge : 0});
         res.status(200).json({message : "loged out successfully"})
     } catch (error) {
         console.log(`error in login controller ${error}`);
@@ -363,3 +364,55 @@ export const testingFunction = async (req,res) => {
         console.log("error in dummyfunction",error)
     }
 }
+
+export const refreshAccessToken = (req, res) => {
+    try {
+        console.log("refreshAccessToken from server running one")
+        // Get refresh token from cookie
+        const refreshToken = req.cookies.refreshToken;
+        // refreshToken
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                error: "No refresh token"
+            });
+        }
+
+        // Verify refresh token
+        const decoded = jwt.verify(
+            refreshToken,
+            process.env.JWT_REFRESH_SECRET
+        );
+
+        // Create new access token
+        const newAccessToken = jwt.sign(
+            { userId: decoded.userId },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "15m"
+            }
+        );
+
+        // Send new access token
+        // accessToken
+        res.cookie("jwt", newAccessToken, {
+            maxAge: 15 * 60 * 1000,
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV !== "development"
+        });
+
+        console.log("refreshAccessToken from server running two",newAccessToken)
+
+        return res.status(200).json({
+            message: "Access token refreshed"
+        });
+
+    } catch (error) {
+        console.log("Refresh token error:", error);
+
+        return res.status(401).json({
+            error: "Invalid or expired refresh token"
+        });
+    }
+};

@@ -22,18 +22,59 @@ const API = axios.create({
 //   }
 // );
 
-API.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (
-      error.response?.status === 401 &&
-      window.location.pathname !== "/login"
-    ) {
-      window.location.href = "/login";
-    }
+// API.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (
+//       error.response?.status === 401 &&
+//       window.location.pathname !== "/login"
+//     ) {
+//       window.location.href = "/login";
+//     }
 
-    return Promise.reject(error);
-  }
+//     return Promise.reject(error);
+//   }
+// );
+
+API.interceptors.response.use(
+    (response) => response,
+
+    async (error) => {
+        const originalRequest = error.config;
+        console.log("interceptors running after token deleted")
+        console.log("originalRequest",originalRequest)
+// error.config contains the configuration of the original failed request.
+// (error.response?.status === 401 || error.response?.status === 500)
+        if (
+          error.response?.status === 401
+             &&
+            !originalRequest._retry &&
+            window.location.pathname !== "/login"
+        ) {
+            originalRequest._retry = true;
+
+            try {
+                // Get a new access token
+                await API.post("/auth/refresh");
+                console.log("/auth/refresh running")
+
+                // Retry the original request
+                return API(originalRequest);
+
+            } catch (refreshError) {
+                // Refresh token is also invalid/expired
+                window.location.href = "/login";
+
+                return Promise.reject(refreshError);
+            }
+        }
+
+        else{
+          console.log("no /auth/refresh running")
+        }
+
+        return Promise.reject(error);
+    }
 );
 
 // ─── GET ───────────────────────────────────────────────────────
@@ -63,3 +104,39 @@ export const deleteRequest = async (url) => {
 };
 
 export default API;
+
+
+
+
+// API.interceptors.response.use(
+//     (response) => response,
+
+//     async (error) => {
+//         const originalRequest = error.config;
+// error.config contains the configuration of the original failed request.
+
+//         if (
+//             error.response?.status === 401 &&
+//             !originalRequest._retry &&
+//             window.location.pathname !== "/login"
+//         ) {
+//             originalRequest._retry = true;
+
+//             try {
+//                 // Get a new access token
+//                 await API.post("/auth/refresh");
+
+//                 // Retry the original request
+//                 return API(originalRequest);
+
+//             } catch (refreshError) {
+//                 // Refresh token is also invalid/expired
+//                 window.location.href = "/login";
+
+//                 return Promise.reject(refreshError);
+//             }
+//         }
+
+//         return Promise.reject(error);
+//     }
+// );
