@@ -4,7 +4,6 @@ const UserCartSchema = mongoose.Schema({
     userId : {
         type : mongoose.Schema.Types.ObjectId,
         required : true,
-        unique : true
     },
 
         productName : {
@@ -31,3 +30,11 @@ const UserCartSchema = mongoose.Schema({
 const UserCart = mongoose.model("UserCart", UserCartSchema);
 
 export default UserCart;
+
+
+
+    // userId : {
+    //     type : mongoose.Schema.Types.ObjectId,
+    //     required : true,
+    //     unique : true
+    // },

@@ -15,13 +15,17 @@ const Messages = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
+
+    console.log("triggred")
     // Server connected
     socket.on("connectionMessage", (message) => {
-      console.log(message);
+      console.log("data from socket.on callback parameter",message);
 
       // Register CURRENT logged-in user
       socket.emit("join", storedUser.userId);
     });
+
+    console.log("re-triggred")
 
     // Receive live message
     socket.on("newMessage", (message) => {
@@ -37,13 +41,16 @@ const Messages = () => {
   }, [socket, storedUser.userId]);
 
   useEffect(() => {
+
+    console.log("location.state._id",location.state._id)
+
   const getOldMessages = async () => {
     const response = await getRequest(`/messages/${location.state._id}`);
     setMessages(response);
   };
 
   getOldMessages();
-}, [location.state._id]);
+}, [location.state._id]); //"This effect uses _id; if _id changes while this component is alive, rerun."
 
   const sendMessagetoServer = () => {
     if (!inputLiveMessage.trim()) return;

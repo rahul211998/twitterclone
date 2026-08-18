@@ -14,6 +14,8 @@ const Sidebar = () => {
 
     {name : "Setting", page : "/settings"},
 
+    {name : "Message", page : "/messagepage"},
+
     { name: "LogOut",  page : "/dummypage"},
 
     // { name: "Profile",  },

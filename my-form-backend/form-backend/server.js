@@ -31,12 +31,18 @@ const PORT = process.env.PORT;
 //     credentials: true,  // must be true to accept cookies
 // })) 
 
+
+// Socket.IO server initialization (configuration) :
+// opts = options
 const socketIo = new Server(server, {
     cors : {
         origin : "http://localhost:5173", // your React dev URL (Vite)
         credentials: true,  // must be true to accept cookies
-    }
+    },
+    connectTimeout : 5000,
 })
+
+console.log("typeof socketIo",typeof socketIo);
 
 const onlineUsers = new Map()
 
@@ -72,7 +78,7 @@ chatNameSpace.on("connection", (socket) => {
             if(receiverSocketId){
                 messageModel.seen = true;
                 await messageModel.save();
-                // console.log("Emitting newMessage one"); 
+                // console.log("Emitting newMessage one",receiverSocketId);  IDIutdJOTE9uSR5UAAAO'
                 chatNameSpace.to(receiverSocketId).emit("newMessage", messageModel)
             }
             else{

@@ -16,8 +16,10 @@ import Following from "./components/profile/follow/Following";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Settings from "./components/common/insideSideBar/Settings";
+import MessagePage from "./pages/message/MessagePage";
 
 function App() {
+  // throw new Error("Testing Error Boundary");
   console.log("app runs")
   return (
     <BrowserRouter>
@@ -48,6 +50,7 @@ function App() {
           <Route path="/messages" element={<Messages/>}/>
           <Route path="/following" element={<Following/>}/>
           <Route path="/settings" element={<Settings/>}/>
+          <Route path="/messagepage" element={<MessagePage/>} />
         </Route>
 
       </Routes>

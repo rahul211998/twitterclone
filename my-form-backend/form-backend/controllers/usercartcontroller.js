@@ -1,5 +1,24 @@
 import UserCart from "../models/usercartmodel.js";
 
+
+export const showAllCartDatas = async (req, res) => {
+    try {
+        const allCarts = await UserCart.find();
+
+        if(allCarts.length === 0){
+           return res.json({err : "no cart found"})
+        }
+
+        res.status(201).json(allCarts);
+    } catch (error) {
+            console.log("showAllCartDatas ERROR:", error);
+            res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
 export const addToCart = async (req, res) => {
 
     // [{} ,{}]
@@ -8,7 +27,7 @@ export const addToCart = async (req, res) => {
 
         // const {cartList} = req.body.cartList;
 
-        console.log("UserCart",UserCart)  // UserCart Model { UserCart }
+        // console.log("UserCart",UserCart)  // UserCart Model { UserCart }
 
         const cartItem = new UserCart({
             userId,
@@ -26,6 +45,7 @@ export const addToCart = async (req, res) => {
             data: cartItem
         });
     } catch (error) {
+        console.log("ADD TO CART ERROR:", error);
             res.status(500).json({
             success: false,
             message: error.message
