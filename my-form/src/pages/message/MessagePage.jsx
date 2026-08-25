@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {getRequest, postRequest} from '../../services/Api'
 import { toast } from "react-toastify";
+import GroupChats from "./groups/GroupChats";
 
 const MessagePage = () => {
   const [showForm, setShowForm] = useState(false);
@@ -8,6 +9,7 @@ const MessagePage = () => {
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [mycartList, setMycartList] = useState([]);
   const [allfollowingusers, setAllfollowingusers] = useState([]);
+  const [groupData , setGroupData] = useState([]);
 
   // const cartfunction = async () => {
   //   try {
@@ -36,7 +38,7 @@ const MessagePage = () => {
     );
   };
 
-  const createGroup = () => {
+  const createGroup = async () => {
     // const currentUserId = "user100"; // current logged-in user for now
 
     // const members = [currentUserId, ...selectedFriends];
@@ -51,10 +53,23 @@ const MessagePage = () => {
       // return console.log("no group name")
     }
 
-    console.log("datas for group lists",{
-      name: groupName,
-      selectedFriends,
-    });
+    const members = selectedFriends;
+
+    try {
+      const response = await postRequest(`/messages/creategroup`,{groupName, members});
+
+      console.log("response for creategroup frontend",response)
+
+      // console.log("response creategroup", response);
+      return toast(`${response.successMessage}`, {autoClose : 1000,closeButton : true, theme : "dark"})
+    } catch (error) {
+      console.log("error in createGroup frontend",error)
+    }
+
+    // console.log("datas for group lists",{
+    //   name: groupName,
+    //   selectedFriends,
+    // });
   };
 
   const getAllFollowingUsers = async () => {
@@ -73,20 +88,38 @@ const MessagePage = () => {
   }
 
   useEffect(() => {
-      const cartfunction = async () => {
-    try {
-      const response = await getRequest('/cart/getallcart');
+    const getMyGroups = async () => {
+  try {
 
-      setMycartList(response)
+    const response = await getRequest("/messages/mygroups");
 
-   console.log("response from cart",response)
-    } catch (error) {
-      console.log("error",error)
-    }
+    setGroupData(response.chatgroups);
+
+    // console.log("my groups", response);
+
+  } catch (error) {
+    console.log("getMyGroups error", error);
   }
+};
 
-  cartfunction()
+getMyGroups()
   },[])
+
+  // useEffect(() => {
+  //     const cartfunction = async () => {
+  //   try {
+  //     const response = await getRequest('/cart/getallcart');
+
+  //     setMycartList(response)
+
+  //  console.log("response from cart",response)
+  //   } catch (error) {
+  //     console.log("error",error)
+  //   }
+  // }
+
+  // cartfunction()
+  // },[])
 
   return (
     <div className="ml-64">
@@ -159,6 +192,10 @@ const MessagePage = () => {
           </div>
         </ul>
       ))}
+
+      <div>
+        <GroupChats groupData = {groupData}  setGroupData = {setGroupData} />
+      </div>
 
     </div>
   );

@@ -39,6 +39,8 @@ export const followUnfollowUser = async (req, res) => {
 
         const isFollowing = currentUser.following.includes(id);
 
+        console.log("running before isfollowing")
+
         if(isFollowing){
             //unfollow
             await User.findByIdAndUpdate({_id : id}, {$pull : {followers : req.user._id}})

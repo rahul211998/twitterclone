@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useEffect } from "react";
 import { getRequest, postRequest } from "../../services/Api";
 import { useRef } from "react";
+import { toast } from "react-toastify";
 
 const Userprofile = () => {
   const fileInputRef = useRef(null);
@@ -43,10 +44,27 @@ suggestedUsers)
 
     const [followedUser, setFollowedUser] = useState(null);
 
-const followUnFollowFunction = (id) => {
+const followUnFollowFunction = async (id) => {
+
+  console.log(id);
   setFollowedUser((currentId) =>
     currentId === id ? null : id
   );
+
+  try {
+    const response = await postRequest(`/users/follow/${id}`);
+
+    console.log("response followUnFollowFunction",response);
+
+    if(!response.message){
+      return toast(`wrong chaeck again`, {autoClose : 1000,closeButton : true, theme : "dark"})
+    }
+
+    return toast(`${response.message}`, {autoClose : 1000,closeButton : true, theme : "dark"})
+
+  } catch (error) {
+    console.log("followUnFollowFunction error", error)
+  }
 };
 
 

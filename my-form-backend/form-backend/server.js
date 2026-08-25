@@ -13,6 +13,7 @@ import messageRoute from "./routes/messageroute.js"
 import {Server} from "socket.io"
 import http from "http"
 import MessageModel from "./models/messagemodel.js";
+import GroupModel from "./models/groupmodel.js";
  
 dotenv.config();
 
@@ -49,13 +50,15 @@ const onlineUsers = new Map()
 const chatNameSpace = socketIo.of('/chat');  // "/chat" is namespace, channel established
 chatNameSpace.on("connection", (socket) => {
     // console.log("User connected:", socket.id);
-    socket.emit("connectionMessage","connected to socket from server");
+    socket.emit("connectionMessage","connected to socket from serversss");
 
 
 
     socket.on("join",(userId) => {
         onlineUsers.set(userId, socket.id)  // example : 100 (user id) => tstshshs (socketid)
 
+        socket.userId = userId;
+        
         console.log("onlineUsers",onlineUsers);
     })
 
@@ -80,11 +83,44 @@ chatNameSpace.on("connection", (socket) => {
                 await messageModel.save();
                 // console.log("Emitting newMessage one",receiverSocketId);  IDIutdJOTE9uSR5UAAAO'
                 chatNameSpace.to(receiverSocketId).emit("newMessage", messageModel)
+
+                // chatNameSpace.to(id).emit('receiveMessage', data) means sending a message to a specific target—either a single user or a specific room.
             }
             else{
                 await messageModel.save();
             }
         
+    })
+
+
+        socket.on("joinGroup", async (groupId) => {
+
+            console.log("joinGroup is triggered from backend")
+        try {
+            const group = await GroupModel.findById(groupId);
+
+            if (!group) {
+            console.log("Group not found");
+            return;
+        }
+
+                const isMember = group.members.some(
+            (memberId) => memberId.toString() === socket.userId
+        );
+
+                if (!isMember) {
+            console.log("User is not a member of this group");
+            return;
+        }
+
+        console.log(
+            `User ${socket.userId} joined group ${groupId}`
+        );
+
+        socket.join(groupId);
+        } catch (error) {
+            console.log("joinGroup error", error);
+        }
     })
 })
 
