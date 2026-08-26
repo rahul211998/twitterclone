@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import {getRequest} from "../../../services/Api"
 
 const GroupChat = ({ groupData, setGroupData }) => {
 
@@ -7,12 +8,22 @@ const GroupChat = ({ groupData, setGroupData }) => {
   const [message, setMessage] = useState("");
 
   const [socket, setSocket] = useState(null);
-  //     const newSocket = io("http://localhost:5000/chat", {
-  //     withCredentials: true,
-  //   });
-  // const [socket] = useState(() => newSocket);
   const socketRef = useRef(null);
   const storedUser = JSON.parse(localStorage.getItem("user"));
+  const [messages, setMessages] = useState([]);
+
+
+    const getMyGroupMessages = async (groupId) => {
+    try {
+      const response = await getRequest(`messages/getmygroupmessages/${groupId}`);
+
+      console.log("all getMyGroupMessages",response)
+
+      setMessages(response?.grpChatMessages)
+    } catch (error) {
+      console.log("error in getMyGroupMessages in frontend",error)
+    }
+  }
 
 
   const handleSendMessage = () => {
@@ -26,25 +37,45 @@ const GroupChat = ({ groupData, setGroupData }) => {
       message: message,
     });
 
+    const messageData = {
+      groupId: selectedGroup?._id,
+      message: message,
+      currentUser : storedUser?.userId,
+    }
+
+    if(!socketRef.current){
+      console.log("no socket found");
+      return;
+    }
+
+     socketRef.current.emit("groupMessageFromBrowser",messageData)
+
+    //  getMyGroupMessages(selectedGroup?._id);
+     
+
     setMessage("");
+
+    // chatNameSpace.to(groupId).emit("newGroupMessage", messageData)
   };
 
-  const joinGroupFunction = (group) => {
+  const joinGroupFunction = async (group) => {
     setSelectedGroup(group)
     // console.log("grp id",group._id)
 
     // socket.emit("joinGroup",group._id)
     socketRef.current.emit("joinGroup",group._id)
-  }
 
-  const socketCount = () => {
-    let count = 0;
-    
+
+      getMyGroupMessages(group._id);
+
+  
   }
 
 
 
   useEffect(() => {
+
+    console.log("useeffect groupchat page runs")
 
   const newSocket = io("http://localhost:5000/chat", {
     withCredentials: true,
@@ -54,7 +85,30 @@ const GroupChat = ({ groupData, setGroupData }) => {
   socketRef.current = newSocket;
 
   newSocket.emit("join", storedUser.userId);
+
+    // /getmygroupmessages/:id
+
+  // const getMyGroupMessages = async (groupId) => {
+  //   try {
+  //     const response = await getRequest(`messages/getmygroupmessages/${groupId}`);
+
+  //     console.log("all getMyGroupMessages",response)
+
+  //     setMessages(response?.grpChatMessages)
+  //   } catch (error) {
+  //     console.log("error in getMyGroupMessages in frontend",error)
+  //   }
+  // }
   
+
+  newSocket.on("newGroupMessage", (populatedMessage) => {
+    console.log("newGroupMessage",populatedMessage)
+
+    // getMyGroupMessages(messageData?.groupId)
+    setMessages((prev) => [...prev, populatedMessage])
+  })
+
+
 
   
 
@@ -68,7 +122,7 @@ const GroupChat = ({ groupData, setGroupData }) => {
 
 
   return (
-    <div className="h-screen bg-black text-white flex">
+    <div className="h-auto bg-black text-white flex overflow-hidden">
 
       {/* ================= GROUP LIST ================= */}
 
@@ -134,7 +188,7 @@ const GroupChat = ({ groupData, setGroupData }) => {
 
       {/* ================= CHAT AREA ================= */}
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-screen">
 
         {!selectedGroup ? (
 
@@ -147,7 +201,7 @@ const GroupChat = ({ groupData, setGroupData }) => {
           <>
             {/* ================= HEADER ================= */}
 
-            <div className="h-16 border-b border-gray-700 flex items-center px-5">
+            <div className="h-16 flex-shrink-0 border-b border-gray-700 flex items-center px-5">
 
               <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden flex items-center justify-center">
 
@@ -184,48 +238,110 @@ const GroupChat = ({ groupData, setGroupData }) => {
 
 
             {/* ================= MESSAGES ================= */}
+            <div className=" flex-1 overflow-y-auto px-5 py-4">
+                          {messages.length === 0 ? (
+  <div className="h-full flex items-center justify-center text-gray-400">
+    <h1>No messages</h1>
+  </div>
+) : (
+  <div className="space-y-4">
 
-            <div className="flex-1 overflow-y-auto p-5">
+    {messages.map((msg) => {
+      console.log("msg.senderId",msg)
+    // message: string;
+    // senderId: Types.ObjectId;
+    // groupId: Types.ObjectId;
 
-              {/* Example received message */}
+      const isCurrentUser = (msg?.senderId?._id === storedUser?.userId  || msg.currentUser === storedUser?.userId)
+        // (msg.currentUser === storedUser?.userId  ||  msg.senderId === storedUser?.userId );
 
-              <div className="flex items-start gap-2 mb-5">
+      //         console.log("isCurrentUser",isCurrentUser)
+      // console.log("msg.senderId?._id",msg.currentUser)
+      // console.log("storedUser?.userId",storedUser?.userId)
 
-                <img
-                  src={
-                    selectedGroup?.members?.[1]?.profileImg ||
-                    "https://via.placeholder.com/40"
-                  }
-                  alt={selectedGroup?.members?.[1]?.username}
-                  className="w-9 h-9 rounded-full object-cover"
-                />
+      return (
+        <div key={msg._id}>
 
-                <div>
+          {isCurrentUser ? (
 
-                  <p className="text-xs text-gray-400 mb-1">
-                    {selectedGroup?.members?.[1]?.username}
-                  </p>
-
-                  <div className="bg-gray-800 rounded-2xl px-4 py-2">
-                    Hello everyone 👋
-                  </div>
-
-                </div>
-
+            // CURRENT USER → RIGHT
+            <div className="flex justify-end">
+              <div className="bg-blue-600 text-white px-4 py-2 rounded-2xl max-w-md">
+                {msg.message}
               </div>
+            </div>
 
+          ) : (
 
-              {/* Example own message */}
+            // OTHER USER → LEFT
+            <div className="flex items-start gap-2">
 
-              <div className="flex justify-end mb-5">
+              <img
+                src={msg.senderId?.profileImg}
+                alt={msg.senderId?.username}
+                className="w-9 h-9 rounded-full object-cover"
+              />
 
-                <div className="bg-blue-600 rounded-2xl px-4 py-2">
-                  Hello Vijay!
+              <div>
+
+                <p className="text-xs text-gray-400 mb-1">
+                  {msg.senderId?.username}
+                </p>
+
+                <div className="bg-gray-800 text-white px-4 py-2 rounded-2xl max-w-md">
+                  {msg.message}
                 </div>
 
               </div>
 
             </div>
+
+          )}
+
+        </div>
+      );
+    })}
+
+  </div>
+)}
+            </div>
+
+
+            {/* {messages.length === 0 ? <div className="h-full flex items-center justify-center text-gray-400">
+      <h1>No messages</h1>
+    </div> : 
+                <div className="space-y-4">
+
+{messages.map((msg, index) => (
+  <div key={index} className="mb-3">
+
+    {msg.currentUser === storedUser?.userId ? (
+      
+      // Current user → RIGHT
+      <div className="flex justify-end">
+        <div className="bg-blue-600 text-white px-4 py-2 rounded-2xl max-w-md">
+          {msg.message}
+        </div>
+      </div>
+
+    ) : (
+
+      // Other user → LEFT
+      <div className="flex justify-start">
+        <div className="bg-gray-800 text-white px-4 py-2 rounded-2xl max-w-md">
+          {msg.message}
+        </div>
+      </div>
+
+    )}
+
+  </div>
+))}
+
+    </div>
+            } */}
+
+
 
 
             {/* ================= INPUT ================= */}
@@ -270,3 +386,58 @@ const GroupChat = ({ groupData, setGroupData }) => {
 };
 
 export default GroupChat;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 flex flex-col justify-end">
+              
+            //   {/* Example received message */}
+
+            //   <div className="flex items-start gap-2 mb-5">
+
+            //     <img
+            //       src={
+            //         selectedGroup?.members?.[1]?.profileImg ||
+            //         "https://via.placeholder.com/40"
+            //       }
+            //       alt={selectedGroup?.members?.[1]?.username}
+            //       className="w-9 h-9 rounded-full object-cover"
+            //     />
+
+            //     <div>
+
+            //       <p className="text-xs text-gray-400 mb-1">
+            //         {selectedGroup?.members?.[1]?.username}
+            //       </p>
+
+            //       <div className="bg-gray-800 rounded-2xl px-4 py-2">
+            //         Hello everyone 👋
+            //       </div>
+
+            //     </div>
+
+            //   </div>
+
+
+            //   {/* Example own message */}
+
+            //   <div className="flex justify-end mb-5">
+
+            //     <div className="bg-blue-600 rounded-2xl px-4 py-2">
+            //       Hello Vijay!
+            //     </div>
+
+            //   </div>
+
+            // </div>

@@ -1,5 +1,6 @@
 import MessageModel from "../models/messagemodel.js";
 import GroupModel from "../models/groupmodel.js";
+import GroupMessageModel from "../models/groupmessagemodel.js";
 
 export const getMessages = async (req, res) => {
   try {
@@ -83,6 +84,26 @@ export const getMyGroups = async (req, res) => {
 
     res.status(500).json({
       errormessage: "Internal server error in getMyGroups"
+    });
+  }
+}
+
+export const getMyGroupMessages = async (req, res) => {
+  try {
+    const {groupId} = req.params;
+    const grpChatMessages = await GroupMessageModel.find({groupId}).populate({path : "senderId", select : ["-password", "-twoFactorSecret", "-twoFactorEnabled"] });
+
+    if(grpChatMessages.length === 0){
+      res.status(200).json({grpChatMessages: []});
+      return;
+    }
+
+    res.status(200).json({grpChatMessages})
+  } catch (error) {
+    console.log("getMyGroups error", error);
+
+    res.status(500).json({
+      errormessage: "Internal server error in getMyGroupChat"
     });
   }
 }

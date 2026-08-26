@@ -14,6 +14,7 @@ import {Server} from "socket.io"
 import http from "http"
 import MessageModel from "./models/messagemodel.js";
 import GroupModel from "./models/groupmodel.js";
+import GroupMessageModel from "./models/groupmessagemodel.js";
  
 dotenv.config();
 
@@ -43,6 +44,9 @@ const socketIo = new Server(server, {
     connectTimeout : 5000,
 })
 
+// const ts = cloudinary.uploader;
+// cloudinary.uploader.upload(img);
+
 console.log("typeof socketIo",typeof socketIo);
 
 const onlineUsers = new Map()
@@ -51,6 +55,8 @@ const chatNameSpace = socketIo.of('/chat');  // "/chat" is namespace, channel es
 chatNameSpace.on("connection", (socket) => {
     // console.log("User connected:", socket.id);
     socket.emit("connectionMessage","connected to socket from serversss");
+
+    
 
 
 
@@ -120,6 +126,41 @@ chatNameSpace.on("connection", (socket) => {
         socket.join(groupId);
         } catch (error) {
             console.log("joinGroup error", error);
+        }
+    })
+
+    socket.on("groupMessageFromBrowser", async (messageData) => {
+        const {groupId , message, currentUser} = messageData;
+
+        if(!groupId || !message){
+            console.log("no groupId or message");
+            return;
+        }
+
+        try {
+        const oginalGroupId = await GroupModel.findById({_id : groupId});
+
+        if(!oginalGroupId){
+            console.log("Group not found")
+            return;
+        }
+
+        const groupChat = GroupMessageModel({groupId,senderId : currentUser, message})
+
+        await groupChat.save();
+
+        const populatedMessage = await groupChat.populate({
+  path: "senderId",
+  select: "-password -twoFactorSecret -twoFactorEnabled"
+});
+
+        console.log("Group found:", oginalGroupId._id);
+
+        chatNameSpace.to(groupId).emit("newGroupMessage", populatedMessage)
+        
+        // console.log("messageData",groupId,message);
+        } catch (error) {
+            console.log("group message error:", error);
         }
     })
 })
