@@ -15,6 +15,7 @@ import http from "http"
 import MessageModel from "./models/messagemodel.js";
 import GroupModel from "./models/groupmodel.js";
 import GroupMessageModel from "./models/groupmessagemodel.js";
+import morgan from 'morgan';
  
 dotenv.config();
 
@@ -179,7 +180,25 @@ app.use(cors({
     credentials: true,  // must be true to accept cookies
 })) 
 
+app.use(morgan("dev",
+    // {
+    // skip : (req, res) => {
+    //     console.log("req.body",req.httpVersion)
+    //     console.log("res.statusMessage",res.statusCode)
+    // },
+
+//     stream: {
+//     write: (str) => {
+//         console.log("str is",str);
+//     }
+// }
+// }
+))
+
+// str is GET /api/users/suggested 200 258.417 ms - 1335
+
 app.use(express.json());
+
 
 app.use("/api/auth",authroute)  
 app.use("/api/cart/",userCartRoute)

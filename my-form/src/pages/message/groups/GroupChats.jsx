@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import {getRequest} from "../../../services/Api"
 
-const GroupChat = ({ groupData, setGroupData }) => {
+const GroupChat = ({ groupData }) => {
 
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [message, setMessage] = useState("");
 
-  const [socket, setSocket] = useState(null);
+  
   const socketRef = useRef(null);
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const [messages, setMessages] = useState([]);
@@ -116,7 +116,7 @@ const GroupChat = ({ groupData, setGroupData }) => {
     newSocket.disconnect();
   };
 
-}, []);
+}, [storedUser.userId]);
 
   
 
@@ -201,7 +201,7 @@ const GroupChat = ({ groupData, setGroupData }) => {
           <>
             {/* ================= HEADER ================= */}
 
-            <div className="h-16 flex-shrink-0 border-b border-gray-700 flex items-center px-5">
+            <div className="h-16 shrink-0 border-b border-gray-700 flex items-center px-5">
 
               <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden flex items-center justify-center">
 
@@ -271,7 +271,7 @@ const GroupChat = ({ groupData, setGroupData }) => {
               </div>
             </div>
 
-          ) : (
+          ) : selectedGroup?._id === msg.groupId &&  (
 
             // OTHER USER → LEFT
             <div className="flex items-start gap-2">
